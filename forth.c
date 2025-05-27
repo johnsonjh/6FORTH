@@ -3,19 +3,19 @@
  *T*  Copyright (c) Bull HN Information Systems Inc., 1989      *
  *T*                                                            *
  *T**************************************************************/
- 
+
 /* About the program:
- 
+
    This program is a revision of Tiny FORTH written by David Malmberg,
    published in 'Powerplay', February/March 1985, written in LOGO.
- 
+
    For ideas, information, comments, errors, ..., concerning this program,
    please contact:
- 
+
       Kathy Larkin
                 LCPD (SDTC 1-523)
        HVN 862-4204
- 
+
    Revision 2.0 (5/16/85 KEL)
     >  Added HELP function.
     >  Added EMIT function.
@@ -26,7 +26,7 @@
     >  Changed greeting and version number
     >  Submitted to LADC X account
  */
- 
+
 #include      <stdio.h>
 /*
  *
@@ -59,7 +59,7 @@ struct        Deflist {
               char *list_ptr;
               };
 struct        Deflist definition [DEFSIZE];
- 
+
 struct        Vartable {
               char name [NAMESIZE];
               double vvalue;
@@ -69,7 +69,7 @@ struct        Varstruct {
               struct Vartable vartbl [VARSIZE];
               };
 struct        Varstruct variable;
- 
+
 struct        Vocablist {
               int count;
               char vname [VOCABSIZE] [NAMESIZE];
@@ -81,14 +81,14 @@ static struct Vocablist vocabulary = {0, "+", "-", "*", "/", "=", ">", "<",
                         "COLD", "LIST", "CR", "@", "!", "VARIABLE", ":", ";",
                         "VLIST", "IF", "THEN", "ELSE", "FORGET", "OVER", "EMIT",
                         "SAVE", "LOAD","QUIT", "HELP", "?"};
- 
+
 struct        Stacktype {
               int top;
               double value [STACKSIZE];
               };
 struct        Stacktype stack;
 struct        Stacktype ndx_stack;
- 
+
 char          in_buf [BUFSIZE];
 double        number;
 /*
@@ -198,7 +198,7 @@ main ()
            *var_process (), *print_list (), *if_proc (), *loop (), *jump (), *help_proc (), *xit (),
            *next (), *prev (), *def_code (), *begin_stmt (), *do_process (), *save_defs (), *load_defs ();
       double x, y, push (), pop (), push_ndx (), pop_ndx ();
- 
+
       make_word (ptr, word);
       switch (i = match_vocab (word)) {
          case /*     +    */  (0): push (pop () + pop ()); break;
@@ -508,7 +508,7 @@ main ()
    {
       int i;
       char *end_ptr, *malloc (), *strchr (), *next ();
- 
+
       if ((end_ptr = strchr (ptr, ';')) == NULL)
          printf (" ** No ending ; found in definition.\n");
       else {
@@ -630,7 +630,7 @@ main ()
       double pop_ndx (), push_ndx (),
              loop_cur = pop_ndx () + 1, loop_end;
       char *prev (), *jump ();
- 
+
       if ((loop_end = pop_ndx ()) != loop_cur){
          push_ndx (loop_end);
          push_ndx (loop_cur);
