@@ -1,6 +1,11 @@
 6FORTH is a floating point FORTH language interpreter.
 
-6FORTH supports a subset of the standard FORTH vocabulary.
+6FORTH supports a small subset of the standard FORTH vocabulary.
+
+This program is a revision of Tiny FORTH written by David Malmberg,
+originally published in "Commodore Power/Play", Volume 4, Number 1,
+Pg. 104-111, February/March 1985, written in LOGO, translated to C
+by Kathy Larkin for Honeywell/Bull CP-6.
 
 The FORTH language is stack oriented.  That is, all numeric arguments are
 put on a stack.  FORTH uses Reverse Polish Notation (RPN) where arithmetic
