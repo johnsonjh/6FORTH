@@ -198,6 +198,7 @@ push (value)
 double value;
 #endif
 { /* pushes value onto stack */
+  /* TODO:  If the stack overflows, we should handle it somehow */
   if (stack.top == STACKSIZE)
     (void)printf (" *** Stack overflow!\n");
   else
@@ -216,6 +217,7 @@ static double
 pop ()
 #endif
 { /* pops top value off of the stack */
+  /* TODO: If the stack underflows, optionally handle it better than 0.0 */
   if (stack.top == EMPTY) {
     (void)printf (" *** Attempting to pop empty stack!\n");
     return (0.0);
@@ -314,7 +316,9 @@ char *ptr;
 static void
 do_list (char *ptr)
 #else
-static void do_list (ptr) char *ptr;
+static void
+do_list (ptr)
+char *ptr;
 #endif
 { /* processes line of input */
   while (ptr != NULL)
@@ -327,7 +331,9 @@ static void do_list (ptr) char *ptr;
 static void
 write_defs (FILE *file_ptr)
 #else
-static void write_defs (file_ptr) FILE *file_ptr;
+static void
+write_defs (file_ptr)
+FILE *file_ptr;
 #endif
 {
   int ndex, num_defs = 0;
@@ -349,7 +355,9 @@ static void write_defs (file_ptr) FILE *file_ptr;
 static void
 read_defs (FILE *file_ptr)
 #else
-static void read_defs (file_ptr) FILE *file_ptr;
+static void
+read_defs (file_ptr)
+FILE *file_ptr;
 #endif
 {
   char buffer[BUFSIZE];
@@ -633,7 +641,9 @@ char *str1, *str2;
 static void
 make_word (char *ptr, char word[])
 #else
-static void make_word (ptr, word) char *ptr, word[];
+static void
+make_word (ptr, word)
+char *ptr, word[];
 #endif
 { /* moves word pointed at by ptr into word and ends with \0 */
   int i = 0;
@@ -1010,7 +1020,8 @@ char *ptr;
   int i;
   char *end_ptr;
 
-  /* TODO: Sane behavior if word already exists as a variable or builtin word */
+  /* TODO: Sane behavior if word already exists as a variable or builtin word;
+           For redefintions the old defintion is not forgotten and freed first */
   if ((end_ptr = strchr (ptr, ';')) == NULL)
     (void)printf (" ** No ending ; found in definition.\n");
   else {
@@ -1193,7 +1204,7 @@ jump (char *ptr, char target[], char *(*sequence) (char *))
 #else
 static char *
 jump (ptr, target, sequence)
-char *ptr, target[], *(*sequence) (char *);
+char *ptr, target[], *(*sequence)();
 #endif
 { /* returns a pointer to target */
   char word[NAMESIZE];
@@ -1265,14 +1276,24 @@ print_list (ptr)
 char *ptr;
 #endif
 { /* processes ." (print) statement */
-  if (strchr (ptr += 3, '\"') == NULL) {
+  if (ptr == NULL || strlen(ptr) < 3) {
+    (void)printf (" ** Invalid input string.\n");
+    return (NULL);
+  }
+
+  ptr += 3;
+
+  char *end_quote = strchr (ptr, '\"');
+  if (end_quote == NULL) {
     (void)printf (" ** Ending \" not found.\n");
     return (NULL);
-  } else {
-    do (void)putc (*ptr, stdout);
-    while (*++ptr != '\"');
-    return (ptr);
   }
+
+  while (ptr < end_quote) {
+    (void)putc(*ptr++, stdout);
+  }
+
+  return end_quote + 1;
 }
 
 /**************************************************************************************************/
@@ -1281,7 +1302,9 @@ char *ptr;
 static void
 def_var (char *ptr)
 #else
-static void def_var (ptr) char *ptr;
+static void
+def_var (ptr)
+char *ptr;
 #endif
 { /* sets up new variable definition */
   /* TODO: Sane behavior if variable already exists as a variable or word */
