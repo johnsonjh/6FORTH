@@ -122,7 +122,7 @@ static struct Stacktype ndx_stack;
 static char in_buf[BUFSIZE];
 static double number;
 static int forever = 1;
-jmp_buf cold;
+static jmp_buf cold;
 
 /**************************************************************************************************/
 
@@ -134,7 +134,7 @@ int
 main ()
 #endif
 {
-  setjmp (cold);
+  (void)setjmp (cold);
   title ();
   tiny_forth ();
 
@@ -500,6 +500,7 @@ char *ptr;
     break;
   case /*   COLD   */ (28):
     longjmp(cold, 0);
+    /*NOTREACHED*/ /* unreachable */ /* not reached */
     break;
   case /*   LIST   */ (29):
     list_defs ();
