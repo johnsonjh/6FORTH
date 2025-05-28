@@ -2,19 +2,15 @@
 
 6FORTH supports a small subset of the standard FORTH vocabulary.
 
-This program is a revision of Tiny FORTH written by David Malmberg,
+This program is a revision of 'TINY.FORTH' written by David Malmberg,
 originally published in "Commodore Power/Play", Volume 4, Number 1,
 Pg. 104-111, February/March 1985, written in LOGO, translated to C
-by Kathy Larkin for Honeywell/Bull CP-6.
+by Kathy Larkin for Honeywell/Bull CP-6 and GCOS-8.
 
 The FORTH language is stack oriented.  That is, all numeric arguments are
 put on a stack.  FORTH uses Reverse Polish Notation (RPN) where arithmetic
 operators follow their arguments.  For example, 3 + 4 becomes 3 4 +, and
 (9 - 8)/(7 * 6) becomes 9 8 - 7 6 * /.
-
-FORTH is a revision of 'TINY.FORTH', written in LOGO by David Malmberg, and
-published in the February/March 1985 issue of Powerplay magazine.  FORTH is
-written in C for CP-6 and GCOS-8 operating systems by Kathy Larkin, LCPD.
 
  The FORTH vocabulary includes:
 
