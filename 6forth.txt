@@ -1,42 +1,16 @@
-.*M*
- HELP file for: FORTH.X
-.*
-.*T*
- **************************************************************
- *                                                            *
- *  Copyright (c) Bull HN Information Systems Inc., 1989      *
- *                                                            *
- **************************************************************
-.*
-.*A*
- FORTH is a floating point Forth language interpreter.
+6FORTH is a floating point FORTH language interpreter.
 
-.*B*
-To invoke the Forth interpreter, type:
- !FORTH.X
+6FORTH supports a subset of the standard FORTH vocabulary.
 
-.*B*
-FORTH supports a subset of the standard Forth vocabulary.
+The FORTH language is stack oriented.  That is, all numeric arguments are
+put on a stack.  FORTH uses Reverse Polish Notation (RPN) where arithmetic
+operators follow their arguments.  For example, 3 + 4 becomes 3 4 +, and
+(9 - 8)/(7 * 6) becomes 9 8 - 7 6 * /.
 
-The Forth language is stack oriented.  That is, all numeric arguments are put
-on a stack.  Forth uses Reverse Polish Notation (RPN) where arithmetic
-operators follow their arguments.  For example, 3 + 4 becomes 3 4 +, and (9 -
-8)/(7 * 6) becomes 9 8 - 7 6 * /.
-
-.*B*
 FORTH is a revision of 'TINY.FORTH', written in LOGO by David Malmberg, and
 published in the February/March 1985 issue of Powerplay magazine.  FORTH is
-written in C and currently runs on CP-6 and GCOS-8 operating systems.
+written in C for CP-6 and GCOS-8 operating systems by Kathy Larkin, LCPD.
 
-.*K* OWNER
- Kathy Larkin, LCPD
-
-.*K* CHANGES Changes changes
- 850606 KEL
-.*R*
- Submitted to the X account.
-
-.*K* COMMANDS VOCABULARY WORDS
  The FORTH vocabulary includes:
 
    - Arithmetic operators: +, -, *, /
@@ -48,15 +22,6 @@ written in C and currently runs on CP-6 and GCOS-8 operating systems.
    - Other words: VLIST, ., .", EMIT, :, LIST, FORGET, CR, ABORT, COLD, SAVE,
      LOAD, HELP, QUIT
 
- For more information on these FORTH words type:
-     HELP (FORTH.X) ARITH_WORDS
-     HELP (FORTH.X) STACK_WORDS
-     HELP (FORTH.X) LOGICAL_WORDS
-     HELP (FORTH.X) VAR_WORDS
-     HELP (FORTH.X) EXEC_CNTL_WORDS
-     HELP (FORTH.X) OTHER_WORDS
-
-.*K* ARITH_WORDS ARITHMETIC_WORDS
  Arithmetic operators:
 
  Syntax            Stack Contents      Description
@@ -67,8 +32,6 @@ written in C and currently runs on CP-6 and GCOS-8 operating systems.
  *                 (n2 n1 -- prod)     Multiplies top two numbers.
  /                 (n2 n1 -- quot)     Divides n2 by n1.
 
- Type ? for some examples.
-.*B* EXAMPLES
  Examples:
 
  5 72.6 +                              Puts 77.6 on the top of the stack.
@@ -77,7 +40,6 @@ written in C and currently runs on CP-6 and GCOS-8 operating systems.
  6 5 4 3 * * /                         Puts 0.10 on the stack (((3*4)*5)/6).
  34 8 + 3 2 * /                        Puts 7.0 on the stack ((34+8)/(3*2)).
 
-.*K* STACK_WORDS STACK_MANIPULATION_WORDS
  Stack manipulation words:
 
  Syntax            Stack Contents      Description
@@ -87,8 +49,6 @@ written in C and currently runs on CP-6 and GCOS-8 operating systems.
  SWAP              (n2 n1 -- n1 n2)    Exchanges top two numbers.
  OVER              (n2 n1 -- n2 n1 n2) Puts copy of second number on top.
 
- Type ? for some examples.
-.*B* EXAMPLES
  Examples:
 
  6 7 OVER DUP                          Leaves stack with 6 7 6 6.
@@ -96,8 +56,6 @@ written in C and currently runs on CP-6 and GCOS-8 operating systems.
  6 7 OVER SWAP DROP                    Leaves stack with 6 6.
  6 DUP *                               Leaves 36 on the stack (squares 6).
 
-
-.*K* LOGICAL_WORDS LOGICAL_COMPARISON_WORDS
  Logical comparison words:
 
  Syntax            Stack Contents      Description
@@ -113,8 +71,6 @@ written in C and currently runs on CP-6 and GCOS-8 operating systems.
  MAX               (n2 n1 -- max)      Leaves greater of two top numbers.
  ABS               (n -- abs)          Gives absolute value of top number.
 
- Type ? for some examples.
-.*B* EXAMPLES
  Examples:
 
  5 3 - 0>                              Puts true (1.0) on the stack.
@@ -125,7 +81,6 @@ written in C and currently runs on CP-6 and GCOS-8 operating systems.
  5 3 + 8 = IF ." Equal! " THEN CR      Prints 'Equal!'.
  5 3 - 8 = IF ." Equal! " ELSE ." Not Equal! " CR    Prints 'Not Equal!'.
 
-.*K* VARIABLE_WORDS VARIABLE_MANIPULATION_WORDS
  Variable manipulation words:
 
  Syntax            Stack Contents      Description
@@ -137,8 +92,6 @@ written in C and currently runs on CP-6 and GCOS-8 operating systems.
  xxx !             (n -- )             (Store) Sets the value of the variable
                                        xxx to n.
 
- Type ? for some examples.
-.*B* EXAMPLES
  Examples:
 
  5 VARIABLE FIVE                       Creates variable FIVE with value = 5.
@@ -146,7 +99,6 @@ written in C and currently runs on CP-6 and GCOS-8 operating systems.
  35 20 - VARIABLE DIFF                 Creates DIFF with value = 15.
  DIFF @ FIVE @ - DIFF !                Changes value of DIFF to 10.
 
-.*K* EXEC_CNTL_WORDS CONTROL_WORDS EXECUTION_CONTROL_WORDS
  Execution control words:
 
  Syntax            Stack Contents      Description
@@ -166,8 +118,6 @@ written in C and currently runs on CP-6 and GCOS-8 operating systems.
                                        REPEAT if false.  Jumps back to BEGIN
                                        when REPEAT encountered.
 
- Type ? for some examples.
-.*B* EXAMPLES
  Examples:
 
  FLAG @ IF ." Flag true " THEN CR    Prints 'Flag true' if variable FLAG = 1.
@@ -177,7 +127,6 @@ written in C and currently runs on CP-6 and GCOS-8 operating systems.
  11 0 DO I . LOOP CR                   Prints numbers from 0 to 10.
  10 BEGIN DUP . 1 - DUP 0= UNTIL CR    Prints numbers from 10 to 0.
 
-.*K* OTHER_WORDS MISC_WORDS
  Other words:
 
  Syntax            Stack Contents      Description
@@ -207,8 +156,6 @@ written in C and currently runs on CP-6 and GCOS-8 operating systems.
                                        words.
  QUIT              ( -- )              Exits FORTH.
 
- Type ? for some examples.
-.*B* EXAMPLES
  Examples:
 
  11 1 DO I . LOOP CR                    Prints numbers from 1 to 10.
@@ -228,15 +175,3 @@ written in C and currently runs on CP-6 and GCOS-8 operating systems.
                                         FORTH words.
  HELP LOOP                              Prints syntax information for the
                                         DO...LOOP construct.
-
-
-.*K* XINDEX
-FORTH.X
-.*R*
-AID=PROGRAMMING_LANGUAGE
-.*R*
-FORTH
-.*K* XINDEX_ABSTRACT
-TOOL=FORTH
-.*R*
-A floating-point FORTH language interpreter.
