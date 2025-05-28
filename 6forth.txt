@@ -125,7 +125,7 @@ written in C for CP-6 and GCOS-8 operating systems by Kathy Larkin, LCPD.
                                        Prints 'Flag true' if FLAG = 1,
                                        otherwise prints  'Flag false'
  11 0 DO I . LOOP CR                   Prints numbers from 0 to 10.
- 10 BEGIN DUP . 1 - DUP 0= UNTIL CR    Prints numbers from 10 to 0.
+ 10 BEGIN DUP . 1 - DUP 0= UNTIL . CR  Prints numbers from 10 to 0.
 
  Other words:
 
