@@ -276,7 +276,7 @@ input ()
 { /* gets and processes user input */
   char *ptr;
 
-  for (;;) {
+  while (forever) {
     ptr = safe_gets (in_buf, (unsigned long)sizeof (in_buf));
     if (ptr == NULL || *ptr == EOF)
       exit (0);
