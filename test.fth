@@ -75,7 +75,7 @@ COLD
 CR ." Setup multiplication table:" CR
 : ROW CR 11 1 DO DUP I * . LOOP DROP ;
 : ROWS 11 1 DO I ROW LOOP ;
-TABLE CR ." Multiplication Table:" ROWS CR
+CR ." Multiplication Table:" ROWS CR
 
 CR ." Goodbye, cruel world." CR
 QUIT
