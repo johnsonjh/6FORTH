@@ -275,7 +275,7 @@ input ()
   char *ptr;
 
   for (;;) {
-    ptr = safe_gets (in_buf, sizeof (in_buf));
+    ptr = safe_gets (in_buf, (unsigned long)sizeof (in_buf));
     if (ptr == NULL || *ptr == EOF)
       exit (0);
     while (isspace (*ptr))
