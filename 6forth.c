@@ -1143,6 +1143,46 @@ char *ptr;
 /**************************************************************************************************/
 
 #ifdef ANSI_FUNC
+char *
+xstrstr (char *haystack, char *needle)
+#else
+char *
+xstrstr (haystack, needle)
+char *haystack;
+char *needle;
+#endif
+{
+  char *h, *n;
+
+  if (!*needle)
+    return haystack;
+
+  while (*haystack)
+    {
+      if (*haystack == *needle)
+        {
+          h = haystack;
+          n = needle;
+
+          while (*h && *n && *h == *n)
+	    {
+              h++;
+              n++;
+            }
+
+          if (!*n)
+            return haystack;
+        }
+
+      haystack++;
+    }
+
+  return (char *)0;
+}
+
+/**************************************************************************************************/
+
+#ifdef ANSI_FUNC
 static char *
 if_proc (char *ptr)
 #else
@@ -1154,8 +1194,8 @@ char *ptr;
   char *target_ptr = ptr;
 
   if (pop () == FALSE_)
-    if ((target_ptr = strstr (ptr, "ELSE")) == NULL)
-      if ((target_ptr = strstr (ptr, "THEN")) == NULL)
+    if ((target_ptr = xstrstr (ptr, "ELSE")) == NULL)
+      if ((target_ptr = xstrstr (ptr, "THEN")) == NULL)
         (void)printf (" ** Expected ELSE or THEN not found.\n");
 
   return (target_ptr);
@@ -1221,7 +1261,7 @@ char *ptr;
 { /* processes DO...LOOP statements */
   double ndx_start;
 
-  if (strstr (ptr, "LOOP") == NULL) {
+  if (xstrstr (ptr, "LOOP") == NULL) {
     (void)printf (" ** DO without ending LOOP.\n");
     return (NULL);
   } else {
@@ -1424,8 +1464,8 @@ begin_stmt (ptr)
 char *ptr;
 #endif
 { /* checks syntax of BEGIN...UNTIL or BEGIN...WHILE...REPEAT statement */
-  if ((strstr (ptr, "UNTIL") != NULL) ||
-      ((strstr (ptr, "WHILE") != NULL) && (strstr (ptr, "REPEAT") != NULL)))
+  if ((xstrstr (ptr, "UNTIL") != NULL) ||
+      ((xstrstr (ptr, "WHILE") != NULL) && (xstrstr (ptr, "REPEAT") != NULL)))
     return (ptr);
   else {
     (void)printf (" ** Expected UNTIL or WHILE...REPEAT not found.\n");
