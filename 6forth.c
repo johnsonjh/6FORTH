@@ -26,9 +26,13 @@
  *  >  Changed greeting and version number
  *  >  Submitted to LADC X account
  *
- * Revision A02 (5/??/2025 JHJ)
+ * Revision A02 (5/28/2025 JHJ)
  *  >  Rename to 6FORTH
  *  >  ANSIfication, safety, and portability
+ *
+ * Revision A03 (10/??/2025 JHJ)
+ *  >  Support for ELKS
+ *  >  Improve portability
  */
 
 /**************************************************************************************************/
@@ -165,7 +169,7 @@ static void
 title ()
 #endif
 { /* prints FORTH titles */
-  (void)printf ("6FORTH A02 here.\n");
+  (void)printf ("6FORTH A03 here.\n");
 }
 
 /**************************************************************************************************/
