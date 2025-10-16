@@ -1,22 +1,25 @@
 #ifndef FORTH_H_
-#define FORTH_H_
-#include <ctype.h>
-#include <setjmp.h>
-#include <stdio.h>
-#include <string.h>
-#ifdef multics
-#include <types.h>
-#include <values.h>
-#include <memory.h>
-#else
-#include <stdlib.h>
-#endif
-#ifdef ANSI_FUNC
-#ifdef INCLUDE_HELP
+# define FORTH_H_
+# include <ctype.h>
+# include <setjmp.h>
+# include <stdio.h>
+# include <string.h>
+# ifdef __ELKS__
+#  include <math.h>
+# endif
+# ifdef multics
+#  include <types.h>
+#  include <values.h>
+#  include <memory.h>
+# else
+#  include <stdlib.h>
+# endif
+# ifdef ANSI_FUNC
+#  ifdef INCLUDE_HELP
 static char *help_proc (char *ptr);
 static void blank_fill (void);
 static void prnt_help (int i);
-#endif
+#  endif
 static char *begin_stmt (char *ptr);
 static char *def_code (char *ptr);
 static char *do_process (char *ptr);
@@ -53,12 +56,12 @@ static void tiny_forth (void);
 static void title (void);
 static void try_logic (int function);
 static void write_defs (FILE *file_ptr);
-#else
-#ifdef INCLUDE_HELP
+# else
+#  ifdef INCLUDE_HELP
 static char *help_proc ();
 static void blank_fill ();
 static void prnt_help ();
-#endif
+#  endif
 static char *begin_stmt ();
 static char *def_code ();
 static char *do_process ();
@@ -95,5 +98,5 @@ static void tiny_forth ();
 static void title ();
 static void try_logic ();
 static void write_defs ();
-#endif
+# endif
 #endif
