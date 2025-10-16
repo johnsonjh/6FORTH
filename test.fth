@@ -1,8 +1,8 @@
-CR ." Floating Point Forth Test Program V1"
-CR ." ====================================" CR CR
+CR ." Integer Forth Test Program V1"
+CR ." =============================" CR CR
 
-3.14 VARIABLE A
-2.72 VARIABLE B
+3 VARIABLE A
+2 VARIABLE B
 
 CR ." DO...LOOP and BEGIN...UNTIL:" CR
 11 0 DO I . LOOP CR

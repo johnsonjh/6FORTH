@@ -44,7 +44,7 @@
 #define BUFSIZE      (384)
 #define DEFSIZE      (100)
 #define EMPTY          (0)
-#define FALSE_       (0.0)
+#define FALSE_       (0)
 #define FIRST_ASCII  ('!')
 #define INITVOCABSIZE (48)
 #define LAST_ASCII   ('z')
@@ -52,7 +52,7 @@
 #define NDXSTACKSIZE  (20)
 #define NOT_FOUND     (-1)
 #define STACKSIZE    (100)
-#define TRUE_        (1.0)
+#define TRUE_        (1)
 #define VARSIZE      (100)
 #define VOCABSIZE    (148)
 
@@ -71,7 +71,7 @@ static struct Deflist definition[DEFSIZE];
 struct Vartable
 {
   char name[NAMESIZE];
-  double vvalue;
+  cell_t vvalue;
 };
 
 struct Varstruct
@@ -111,7 +111,7 @@ static struct Vocablist vocabulary =
 struct Stacktype
 {
   int top;
-  double value[STACKSIZE];
+  cell_t value[STACKSIZE];
 };
 
 static struct Stacktype stack;
@@ -120,7 +120,7 @@ static struct Stacktype ndx_stack;
 /**************************************************************************************************/
 
 static char in_buf[BUFSIZE];
-static double number;
+static cell_t number;
 static int forever = 1;
 static jmp_buf cold;
 
@@ -190,12 +190,12 @@ setup ()
 /**************************************************************************************************/
 
 #ifdef ANSI_FUNC
-static double
-push (double value)
+static cell_t
+push (cell_t value)
 #else
-static double
+static cell_t
 push (value)
-double value;
+cell_t value;
 #endif
 { /* pushes value onto stack */
   /* TODO:  If the stack overflows, we should handle it somehow */
@@ -210,17 +210,17 @@ double value;
 /**************************************************************************************************/
 
 #ifdef ANSI_FUNC
-static double
+static cell_t
 pop (void)
 #else
-static double
+static cell_t
 pop ()
 #endif
 { /* pops top value off of the stack */
   /* TODO: If the stack underflows, optionally handle it better than 0.0 */
   if (stack.top == EMPTY) {
     (void)printf (" *** Attempting to pop empty stack!\n");
-    return (0.0);
+    return (0);
   } else
     return (stack.value[--stack.top]);
 }
@@ -421,96 +421,6 @@ char *ptr;
 
 /**************************************************************************************************/
 
-#ifdef __ELKS__
-# ifdef ANSI_FUNC
-static double
-fmod (double x, double y)
-# else
-static double
-fmod (x, y)
-double x;
-double y;
-# endif
-{
-  long q;
-
-  if (y == 0.0)
-    return 0.0;
-
-  q = (long)(x / y);
-
-  return x - (double)q * y;
-}
-#endif
-
-/**************************************************************************************************/
-
-#ifdef __ELKS__
-# ifdef ANSI_FUNC
-static void
-elks_dbl (double f_val)
-# else
-static void
-elks_dbl (f_val)
-double f_val;
-# endif
-{
-  double int_part_d, frac_part_d;
-  long long int_part;
-  int frac_part;
-  char intbuf[32];
-  char *p = &intbuf[31];
-  int int_len, total_len, pad;
-
-  if (f_val < 0.0)
-    {
-      putchar ('-');
-      f_val = -f_val;
-    }
-  else
-    putchar(' ');
-
-  int_part_d  = floor(f_val);
-  int_part    = (long long) int_part_d;
-
-  frac_part_d = (f_val - int_part_d) * 1000.0;
-  frac_part   = (int)(frac_part_d + 0.5);
-
-  if (frac_part >= 1000)
-    {
-      frac_part = 0;
-      int_part += 1;
-    }
-
-  *p = '\0';
-
-  if (int_part == 0)
-    *--p = '0';
-  else
-    {
-      long long n = int_part;
-
-      while (n > 0 && p > intbuf)
-        {
-          *--p = '0' + (n % 10);
-          n /= 10;
-        }
-    }
-
-  int_len = (int)strlen (p);
-  total_len = 1 + int_len + 1 + 3;
-  pad = 6 - total_len;
-
-  while (pad-- > 0)
-    putchar (' ');
-
-  fputs (p, stdout);
-  printf (".%03d", frac_part);
-}
-#endif
-
-/**************************************************************************************************/
-
 #ifdef ANSI_FUNC
 static char *
 do_word (char *ptr)
@@ -522,7 +432,7 @@ char *ptr;
 { /* processes one word of input */
   int i;
   char word[NAMESIZE];
-  double x, y;
+  cell_t x, y;
   make_word (ptr, word);
   switch (i = match_vocab (word))
   {
@@ -538,7 +448,10 @@ char *ptr;
     break;
   case /*     /    */ (3):
     y = pop ();
-    (void)push (pop () / y);
+    if (y == 0)
+      (void)printf(" *** Division by zero!\n");
+    else
+      (void)push (pop () / y);
     break;
   case /*     =    */ (4):
   case /*     >    */ (5):
@@ -553,11 +466,7 @@ char *ptr;
     try_logic (i - 3);
     break;
   case /*     .    */ (14):
-#ifdef __ELKS__
-    elks_dbl ( pop ());
-#else
-    (void)printf (" %5.3f", pop ());
-#endif
+    (void)printf (" %ld", pop ());
     break;
   case /*    ."    */ (15):
     ptr = print_list (ptr);
@@ -649,7 +558,7 @@ char *ptr;
     (void)push (y);
     break;
   case /*    EMIT  */ (42):
-    (void)putc ((int)(double)pop (), stdout);
+    (void)putc ((int)pop (), stdout);
     break;
   case /*    SAVE  */ (43):
     ptr = save_defs (ptr);
@@ -694,7 +603,7 @@ char *word;
 { /* sets global number and returns TRUE_ if word is numeric */
   char *num_ptr;
 
-  number = strtod (word, &num_ptr);
+  number = strtol (word, &num_ptr, 10);
 
   return ((num_ptr == word) ? (int)(FALSE_) : (int)(TRUE_));
 }
@@ -1259,7 +1168,7 @@ do_process (ptr)
 char *ptr;
 #endif
 { /* processes DO...LOOP statements */
-  double ndx_start;
+  cell_t ndx_start;
 
   if (xstrstr (ptr, "LOOP") == NULL) {
     (void)printf (" ** DO without ending LOOP.\n");
@@ -1275,12 +1184,12 @@ char *ptr;
 /**************************************************************************************************/
 
 #ifdef ANSI_FUNC
-static double
-push_ndx (double ndx_value)
+static cell_t
+push_ndx (cell_t ndx_value)
 #else
-static double
+static cell_t
 push_ndx (ndx_value)
-double ndx_value;
+cell_t ndx_value;
 #endif
 { /* pushes ndx_value onto ndx_stack */
   if (ndx_stack.top == NDXSTACKSIZE)
@@ -1294,16 +1203,16 @@ double ndx_value;
 /**************************************************************************************************/
 
 #ifdef ANSI_FUNC
-static double
+static cell_t
 pop_ndx (void)
 #else
-static double
+static cell_t
 pop_ndx ()
 #endif
 { /* pops ndx_stack */
   if (ndx_stack.top == EMPTY) {
     (void)printf (" *** Index stack underflow!\n");
-    return (0.0);
+    return (0);
   } else
     return (ndx_stack.value[--ndx_stack.top]);
 }
@@ -1319,7 +1228,7 @@ loop (ptr)
 char *ptr;
 #endif
 { /* processes DO...LOOP iteration */
-  double loop_cur = pop_ndx () + 1, loop_end;
+  cell_t loop_cur = pop_ndx () + 1, loop_end;
 
   if ((loop_end = pop_ndx ()) != loop_cur) {
     (void)push_ndx (loop_end);
@@ -1358,7 +1267,7 @@ try_logic (int function)
 static void try_logic (function) int function;
 #endif
 { /* processes logic function statements */
-  double z2 = pop (), z1 = 0.0;
+  cell_t z2 = pop (), z1 = 0;
 
   if (function < 6)
     z1 = pop ();

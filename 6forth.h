@@ -14,6 +14,9 @@
 # else
 #  include <stdlib.h>
 # endif
+
+typedef long cell_t;
+
 # ifdef ANSI_FUNC
 #  ifdef INCLUDE_HELP
 static char *help_proc (char *ptr);
@@ -35,10 +38,10 @@ static char *safe_gets (char *buf, unsigned long buf_size);
 static char *save_defs (char *ptr);
 static char *var_process (char *ptr, char word[], int var_ndx);
 static char *xit (char *ptr);
-static double pop_ndx (void);
-static double pop (void);
-static double push (double value);
-static double push_ndx (double ndx_value);
+static cell_t pop_ndx (void);
+static cell_t pop (void);
+static cell_t push (cell_t value);
+static cell_t push_ndx (cell_t ndx_value);
 static FILE *open_file (char *file_name, char *mode);
 static int def_member (char word[]);
 static int match_vocab (char word[]);
@@ -77,10 +80,10 @@ static char *safe_gets ();
 static char *save_defs ();
 static char *var_process ();
 static char *xit ();
-static double pop_ndx ();
-static double pop ();
-static double push ();
-static double push_ndx ();
+static cell_t pop_ndx ();
+static cell_t pop ();
+static cell_t push ();
+static cell_t push_ndx ();
 static FILE *open_file ();
 static int def_member ();
 static int match_vocab ();
