@@ -44,7 +44,7 @@
 #define BUFSIZE      (384)
 #define DEFSIZE      (100)
 #define EMPTY          (0)
-#define FALSE        (0.0)
+#define FALSE_       (0.0)
 #define FIRST_ASCII  ('!')
 #define INITVOCABSIZE (48)
 #define LAST_ASCII   ('z')
@@ -52,7 +52,7 @@
 #define NDXSTACKSIZE  (20)
 #define NOT_FOUND     (-1)
 #define STACKSIZE    (100)
-#define TRUE         (1.0)
+#define TRUE_        (1.0)
 #define VARSIZE      (100)
 #define VOCABSIZE    (148)
 
@@ -578,11 +578,11 @@ char *ptr;
     ptr = begin_stmt (ptr);
     break;
   case /*   UNTIL  */ (22):
-    if (!(pop () == TRUE))
+    if (!(pop () == TRUE_))
       ptr = jump (ptr, "BEGIN", prev);
     break;
   case /*   WHILE  */ (23):
-    if (pop () == FALSE)
+    if (pop () == FALSE_)
       ptr = jump (ptr, "REPEAT", next);
     break;
   case /*  REPEAT  */ (24):
@@ -691,12 +691,12 @@ static int
 numeric (word)
 char *word;
 #endif
-{ /* sets global number and returns TRUE if word is numeric */
+{ /* sets global number and returns TRUE_ if word is numeric */
   char *num_ptr;
 
   number = strtod (word, &num_ptr);
 
-  return ((num_ptr == word) ? (int)(FALSE) : (int)(TRUE));
+  return ((num_ptr == word) ? (int)(FALSE_) : (int)(TRUE_));
 }
 
 /**************************************************************************************************/
@@ -716,12 +716,12 @@ char *str1, *str2;
   p2 = str2;
 
   if (p1 == NULL || p2 == NULL) {
-    return (p1 == NULL && p2 == NULL) ? (int)(TRUE) : (int)(FALSE);
+    return (p1 == NULL && p2 == NULL) ? (int)(TRUE_) : (int)(FALSE_);
   }
 
   while (*p1 != '\0' && *p2 != '\0') {
     if (*p1 != *p2)
-      return (int)(FALSE);
+      return (int)(FALSE_);
     p1++;
     p2++;
   }
@@ -1068,10 +1068,10 @@ list_defs ()
 { /* lists current definitions */
   int ndex, no_defs_found;
 
-  for (ndex = 0, no_defs_found = (int)(TRUE); ndex < DEFSIZE; ndex++)
+  for (ndex = 0, no_defs_found = (int)(TRUE_); ndex < DEFSIZE; ndex++)
     if (definition[ndex].list_ptr) {
       (void)printf (" %s: %s\n", definition[ndex].dname, definition[ndex].list_ptr);
-      no_defs_found = (int)(FALSE);
+      no_defs_found = (int)(FALSE_);
     }
   if (no_defs_found)
     (void)printf (" No new FORTH words defined.\n");
@@ -1153,7 +1153,7 @@ char *ptr;
 { /* processes IF...THEN and IF...ELSE...THEN statements */
   char *target_ptr = ptr;
 
-  if (pop () == FALSE)
+  if (pop () == FALSE_)
     if ((target_ptr = strstr (ptr, "ELSE")) == NULL)
       if ((target_ptr = strstr (ptr, "THEN")) == NULL)
         (void)printf (" ** Expected ELSE or THEN not found.\n");
@@ -1325,13 +1325,13 @@ static void try_logic (function) int function;
   switch (function)
   {
   case (1):
-    (void)push ((z1 == z2) ? TRUE : FALSE);
+    (void)push ((z1 == z2) ? TRUE_ : FALSE_);
     break;
   case (2):
-    (void)push ((z1 > z2) ? TRUE : FALSE);
+    (void)push ((z1 > z2) ? TRUE_ : FALSE_);
     break;
   case (3):
-    (void)push ((z1 < z2) ? TRUE : FALSE);
+    (void)push ((z1 < z2) ? TRUE_ : FALSE_);
     break;
   case (4):
     (void)push ((z1 <= z2) ? z1 : z2);
@@ -1342,13 +1342,13 @@ static void try_logic (function) int function;
   case (10):
     /* same as case (6) */
   case (6):
-    (void)push ((z2 == 0) ? TRUE : FALSE);
+    (void)push ((z2 == 0) ? TRUE_ : FALSE_);
     break;
   case (7):
-    (void)push ((z2 > 0) ? TRUE : FALSE);
+    (void)push ((z2 > 0) ? TRUE_ : FALSE_);
     break;
   case (8):
-    (void)push ((z2 < 0) ? TRUE : FALSE);
+    (void)push ((z2 < 0) ? TRUE_ : FALSE_);
     break;
   case (9):
     (void)push ((z2 < 0) ? -z2 : z2);
@@ -1370,6 +1370,8 @@ print_list (ptr)
 char *ptr;
 #endif
 { /* processes ." (print) statement */
+  char *end_quote;
+
   if (ptr == NULL || strlen(ptr) < 3) {
     (void)printf (" ** Invalid input string.\n");
     return (NULL);
@@ -1377,7 +1379,7 @@ char *ptr;
 
   ptr += 3;
 
-  char *end_quote = strchr (ptr, '\"');
+  end_quote = strchr (ptr, '\"');
   if (end_quote == NULL) {
     (void)printf (" ** Ending \" not found.\n");
     return (NULL);
