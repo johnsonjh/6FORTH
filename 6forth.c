@@ -138,6 +138,10 @@ int
 main ()
 #endif
 {
+#ifdef __TURBOC__
+  static double __ignore__;
+  __ignore__ = sqrt (23);
+#endif
   (void)setjmp (cold);
   title ();
   tiny_forth ();
