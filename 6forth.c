@@ -429,72 +429,6 @@ char *ptr;
 
 /**************************************************************************************************/
 
-#ifdef __ELKS__
-# ifdef ANSI_FUNC
-static void
-elks_dbl (double f_val)
-# else
-static void
-elks_dbl (f_val)
-double f_val;
-# endif
-{
-  double int_part_d, frac_part_d;
-  long long int_part;
-  int frac_part;
-  char intbuf[32];
-  char *p = &intbuf[31];
-  int int_len, total_len, pad;
-
-  if (f_val < 0.0)
-    {
-      putchar ('-');
-      f_val = -f_val;
-    }
-  else
-    putchar(' ');
-
-  int_part_d  = floor(f_val);
-  int_part    = (long long) int_part_d;
-
-  frac_part_d = (f_val - int_part_d) * 1000.0;
-  frac_part   = (int)(frac_part_d + 0.5);
-
-  if (frac_part >= 1000)
-    {
-      frac_part = 0;
-      int_part += 1;
-    }
-
-  *p = '\0';
-
-  if (int_part == 0)
-    *--p = '0';
-  else
-    {
-      long long n = int_part;
-
-      while (n > 0 && p > intbuf)
-        {
-          *--p = '0' + (n % 10);
-          n /= 10;
-        }
-    }
-
-  int_len = (int)strlen (p);
-  total_len = 1 + int_len + 1 + 3;
-  pad = 6 - total_len;
-
-  while (pad-- > 0)
-    putchar (' ');
-
-  fputs (p, stdout);
-  printf (".%03d", frac_part);
-}
-#endif
-
-/**************************************************************************************************/
-
 #ifdef ANSI_FUNC
 static char *
 do_word (char *ptr)
@@ -538,10 +472,9 @@ char *ptr;
     break;
   case /*     .    */ (14):
 #ifdef __ELKS__
-    elks_dbl ( pop ());
-#else
-    (void)printf (" %5.3f", pop ());
+    __STDIO_PRINT_FLOATS;
 #endif
+    (void)printf (" %5.3f", pop ());
     break;
   case /*    ."    */ (15):
     ptr = print_list (ptr);

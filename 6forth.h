@@ -6,6 +6,7 @@
 # include <string.h>
 # ifdef __ELKS__
 #  include <math.h>
+#  include <sys/linksym.h>
 # endif
 # ifdef multics
 #  include <types.h>
