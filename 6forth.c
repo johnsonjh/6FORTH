@@ -431,30 +431,6 @@ char *ptr;
 
 #ifdef __ELKS__
 # ifdef ANSI_FUNC
-static double
-fmod (double x, double y)
-# else
-static double
-fmod (x, y)
-double x;
-double y;
-# endif
-{
-  long q;
-
-  if (y == 0.0)
-    return 0.0;
-
-  q = (long)(x / y);
-
-  return x - (double)q * y;
-}
-#endif
-
-/**************************************************************************************************/
-
-#ifdef __ELKS__
-# ifdef ANSI_FUNC
 static void
 elks_dbl (double f_val)
 # else
