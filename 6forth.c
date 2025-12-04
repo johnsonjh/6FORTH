@@ -30,9 +30,10 @@
  *  >  Rename to 6FORTH
  *  >  ANSIfication, safety, and portability
  *
- * Revision A03 (10/??/2025 JHJ)
+ * Revision A03 (12/04/2025 JHJ)
  *  >  Support for ELKS
  *  >  Improve portability
+ *  >  Spelling fixes
  */
 
 /**************************************************************************************************/
@@ -1032,7 +1033,7 @@ char *ptr;
   char *end_ptr;
 
   /* TODO: Sane behavior if word already exists as a variable or builtin word;
-           For redefintions the old defintion is not forgotten and freed first */
+           For redefinitions the old definition is not forgotten and freed first */
   if ((end_ptr = strchr (ptr, ';')) == NULL)
     (void)printf (" ** No ending ; found in definition.\n");
   else {
@@ -1046,7 +1047,7 @@ char *ptr;
       *(end_ptr - 1) = '\0';
       definition[i].list_ptr = malloc (sizeof (in_buf));
       if (definition[i].list_ptr == NULL) {
-        (void)printf (" ** Memory exhaused!\n");
+        (void)printf (" ** Memory exhausted!\n");
       } else {
         if (next (ptr) != NULL)
           (void)strcpy (definition[i].list_ptr, next (ptr));
