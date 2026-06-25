@@ -1,4 +1,6 @@
-6forth all: 6forth.c 6forth.h
+all: 6forth
+
+6forth: 6forth.c 6forth.h
 	$(CC) $(CFLAGS) $(LDFLAGS) -DANSI_FUNC -o 6forth 6forth.c
 
 test: 6forth test.fth
@@ -14,4 +16,4 @@ clean distclean:
 
 .NOTPARALLEL:
 
-.PHONY: test clean distclean
+.PHONY: all test clean distclean
