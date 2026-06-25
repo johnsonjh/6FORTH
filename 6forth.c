@@ -3,6 +3,7 @@
 /*
  * 6FORTH
  * Copyright (c) 1989 Bull HN Information Systems Inc.
+ * Copyright (c) 2025-2026 Jeffrey H. Johnson <johnsonjh.dev@gmail.com>
  *
  * This program is a revision of Tiny FORTH written by David Malmberg,
  * published in 'Powerplay', February/March 1985, written in LOGO.
@@ -34,6 +35,9 @@
  *  >  Support for ELKS
  *  >  Improve portability
  *  >  Spelling fixes
+ *
+ * Revision A04 (06/25/2026 JHJ)
+ *  >  Cleanups and bugfixes
  */
 
 /**************************************************************************************************/
@@ -174,7 +178,7 @@ static void
 title ()
 #endif
 { /* prints FORTH titles */
-  (void)printf ("6FORTH A03 here.\n");
+  (void)printf ("6FORTH A04 here.\n");
 }
 
 /**************************************************************************************************/
@@ -193,7 +197,12 @@ setup ()
   stack.top = ndx_stack.top = 0;
   variable.count = 0;
 
-  for (i = 0; i < DEFSIZE; definition[i++].list_ptr = NULL);
+  for (i = 0; i < DEFSIZE; i++) {
+    if (definition[i].list_ptr) {
+      free (definition[i].list_ptr);
+      definition[i].list_ptr = NULL;
+    }
+  }
 }
 
 /**************************************************************************************************/
@@ -492,6 +501,16 @@ char *ptr;
   case /*     I    */ (19):
     (void)push (push_ndx (pop_ndx ()));
     break;
+  case /*   LEAVE  */ (20):
+    if (ndx_stack.top >= 2) {
+      (void)pop_ndx ();
+      double endv = pop_ndx ();
+      (void)push_ndx (endv);
+      (void)push_ndx (endv - 1.0);
+    } else {
+      (void)printf (" *** LEAVE with no active loop!\n");
+    }
+    break;
   case /*   BEGIN  */ (21):
     ptr = begin_stmt (ptr);
     break;
@@ -588,8 +607,10 @@ char *ptr;
   default:
     if (numeric (word))
       (void)push (number);
-    else if ((i = def_member (word)) >= 0)
-      do_list (definition[i].list_ptr);
+    else if ((i = def_member (word)) >= 0) {
+      if (definition[i].list_ptr && definition[i].list_ptr[0] != '\0')
+        do_list (definition[i].list_ptr);
+    }
     else if ((i = var_member (word)) >= 0)
       ptr = var_process (ptr, word, i);
     else
@@ -614,7 +635,10 @@ char *word;
 
   number = strtod (word, &num_ptr);
 
-  return ((num_ptr == word) ? (int)(FALSE_) : (int)(TRUE_));
+  /* require the entire token to be consumed as a valid number */
+  if (num_ptr == word || *num_ptr != '\0')
+    return (int)(FALSE_);
+  return (int)(TRUE_);
 }
 
 /**************************************************************************************************/
@@ -665,7 +689,9 @@ char *ptr, word[];
   if (ptr == NULL)
     return;
 
-  while ((word[i++] = ((*ptr >= FIRST_ASCII) && (*ptr <= LAST_ASCII)) ? *ptr++ : '\0') != '\0');
+  while (i < NAMESIZE - 1 && *ptr >= FIRST_ASCII && *ptr <= LAST_ASCII)
+    word[i++] = *ptr++;
+  word[i] = '\0';
 }
 
 /**************************************************************************************************/
@@ -1008,12 +1034,14 @@ char word[];
 { /* tries to match word with a current definition */
   int def_ndx = 0;
 
-  while (def_ndx < DEFSIZE)
-    if (definition[def_ndx].list_ptr
-        && (str_cmp (word, definition[def_ndx].dname)))
-      return (def_ndx);
-    else
-      def_ndx++;
+  while (def_ndx < DEFSIZE) {
+    if (definition[def_ndx].list_ptr) {
+      if (str_cmp (word, definition[def_ndx].dname)) {
+        return (def_ndx);
+      }
+    }
+    def_ndx++;
+  }
 
   return (NOT_FOUND);
 }
@@ -1041,16 +1069,27 @@ char *ptr;
     if (i >= DEFSIZE)
       (void)printf (" ** Out of definition space!\n");
     else {
-      make_word (ptr = next (ptr), definition[i].dname);
+      char *name_start = next (ptr);
+      make_word (name_start, definition[i].dname);
       (void)printf (" %s is now defined as a word.\n", definition[i].dname);
       (void)strcpy (vocabulary.vname[vocabulary.count++], definition[i].dname);
-      *(end_ptr - 1) = '\0';
-      definition[i].list_ptr = malloc (sizeof (in_buf));
+      definition[i].list_ptr = malloc (BUFSIZE);
       if (definition[i].list_ptr == NULL) {
         (void)printf (" ** Memory exhausted!\n");
       } else {
-        if (next (ptr) != NULL)
-          (void)strcpy (definition[i].list_ptr, next (ptr));
+        char *body = next (name_start);
+        if (body != NULL && end_ptr > body) {
+          int n = (int)(end_ptr - body - 1); /* up to before ; */
+          if (n > BUFSIZE - 1) n = BUFSIZE - 1;
+          if (n > 0) {
+            (void)memcpy (definition[i].list_ptr, body, (size_t)n);
+            definition[i].list_ptr[n] = '\0';
+          } else {
+            definition[i].list_ptr[0] = '\0';
+          }
+        } else {
+          definition[i].list_ptr[0] = '\0';
+        }
       }
     }
   }
@@ -1330,12 +1369,14 @@ char *ptr;
 { /* processes ." (print) statement */
   char *end_quote;
 
-  if (ptr == NULL || strlen(ptr) < 3) {
+  if (ptr == NULL || strlen(ptr) < 2) {
     (void)printf (" ** Invalid input string.\n");
     return (NULL);
   }
 
-  ptr += 3;
+  ptr += 2; /* skip past the ." token */
+  if (*ptr && isspace(*ptr))
+    ptr++; /* eat at most one leading space to preserve historical behavior */
 
   end_quote = strchr (ptr, '\"');
   if (end_quote == NULL) {
