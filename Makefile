@@ -10,7 +10,7 @@ test: 6forth test.fth
 	diff test.log test.out
 
 clean distclean:
-	rm -f a.out 6forth ./*.o core*
+	rm -f a.out 6forth test.out ./*.o core*
 
 .NOTPARALLEL:
 
